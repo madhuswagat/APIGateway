@@ -1,0 +1,42 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: apigaeway
+  cloud:
+    gateway:
+      routes:
+        - id: allstudent
+          uri: lb://Studentms
+          predicates:
+            - Path=/all-Studentms/**
+          filters:
+            - RewritePath=/all-Studentms/(?<path>.*), /$\{path}
+
+        - id: onboardingid
+          uri: lb://onboardingStudent
+          predicates:
+            - Path=/new-onboardingStudent/**
+          filters:
+            - RewritePath=/new-onboardingStudent/(?<path>.*), /$\{path}
+
+
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
+
+# Actuator (visualize the circuit-breaker state-changes)
+management:
+  health:
+    circuitbreakers:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always
